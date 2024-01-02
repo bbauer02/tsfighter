@@ -3,6 +3,8 @@ import { GameViewport } from './interfaces';
 import { drawKen, updateKen } from "./ken.ts";
 import { drawBackground } from  "./stage.ts";
 
+import {drawRyu, updateRyu} from "./ryu.ts";
+
 const gameViewport : GameViewport = {
     WIDTH: 384,
     HEIGHT: 224
@@ -21,6 +23,9 @@ function animate () {
     drawBackground(context);
     updateKen(context);
     drawKen(context);
+
+    updateRyu(context);
+    drawRyu(context);
 
     requestAnimationFrame(animate);
 }
