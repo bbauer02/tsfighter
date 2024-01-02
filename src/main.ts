@@ -1,9 +1,8 @@
 import './style.css'
 import { GameViewport } from './interfaces';
-import { drawKen, updateKen } from "./ken.ts";
-import { drawBackground } from  "./stage.ts";
-
-import {drawRyu, updateRyu} from "./ryu.ts";
+import { Ken } from "./entities/Ken.ts";
+import {Ryu} from "./entities/Ryu.ts";
+import { Stage } from "./entities/Stage.ts";
 
 const gameViewport : GameViewport = {
     WIDTH: 384,
@@ -17,15 +16,21 @@ const context: CanvasRenderingContext2D = <CanvasRenderingContext2D>canvas.getCo
 canvas.width = gameViewport.WIDTH;
 canvas.height = gameViewport.HEIGHT;
 
+const ken = new Ken(80, 110, 1);
+const ryu = new Ryu(80, 110, -1);
+
+const stage = new Stage();
 
 
 function animate () {
-    drawBackground(context);
-    updateKen(context);
-    drawKen(context);
 
-    updateRyu(context);
-    drawRyu(context);
+    stage.draw(context);
+
+    ken.update(context);
+    ken.draw(context);
+
+    ryu.update(context);
+    ryu.draw(context);
 
     requestAnimationFrame(animate);
 }
