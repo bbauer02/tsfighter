@@ -9,5 +9,9 @@ export class Stage {
         context.drawImage(this.image, 0, 0);
     }
 
+    update() {
+        // nothing to do
+    }
+
 }
 

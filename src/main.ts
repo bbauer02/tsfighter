@@ -1,8 +1,9 @@
 import './style.css'
 import { GameViewport } from './interfaces';
-import { Ken } from "./entities/Ken.ts";
-import {Ryu} from "./entities/Ryu.ts";
+import { Ken } from "./entities/fighters/Ken.ts";
+import {Ryu} from "./entities/fighters/Ryu.ts";
 import { Stage } from "./entities/Stage.ts";
+import { FpsCounter} from "./entities/FpsCounter.ts";
 
 const gameViewport : GameViewport = {
     WIDTH: 384,
@@ -16,23 +17,25 @@ const context: CanvasRenderingContext2D = <CanvasRenderingContext2D>canvas.getCo
 canvas.width = gameViewport.WIDTH;
 canvas.height = gameViewport.HEIGHT;
 
-const ken = new Ken(80, 110, 1);
-const ryu = new Ryu(80, 110, -1);
+const entities = [
+    new Stage(),
+    new Ken(80, 110, 150),
+    new Ryu(80, 110, -150),
+    new FpsCounter()
+];
 
-const stage = new Stage();
+let previousTime :number = 0;
+let secondsPassed :number = 0;
 
-
-function animate () {
-
-    stage.draw(context);
-
-    ken.update(context);
-    ken.draw(context);
-
-    ryu.update(context);
-    ryu.draw(context);
-
+function animate (time : number) : void {
     requestAnimationFrame(animate);
+    secondsPassed = (time - previousTime) / 1000;
+    previousTime = time;
+
+    for (const entity of entities) {
+        entity.update(secondsPassed, context);
+        entity.draw(context);
+    }
 }
 
-animate();
+animate(0);

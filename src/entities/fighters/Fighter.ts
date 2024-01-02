@@ -1,4 +1,4 @@
-import { Position } from '../interfaces';
+import { Position } from '../../interfaces';
 
 export default class Fighter {
 
@@ -17,8 +17,10 @@ export default class Fighter {
     get name(): string {
         return this._name;
     }
-    update(context: CanvasRenderingContext2D) {
-        this.position.x += this.velocity;
+    update(secondsPassed : number, context: CanvasRenderingContext2D) {
+
+        this.position.x += this.velocity * secondsPassed;
+
 
         if (this.position.x > context.canvas.width - this.image.width || this.position.x < 0) {
             this.velocity = -this.velocity;
