@@ -26,7 +26,7 @@ export default class Fighter {
         this.frames= new Map();
         this.animationFrame = 0;
         this.animationTimer = 0;
-
+        this.currentState = "";
         this.animations = {};
         this.direction = direction;
         this.states = {
@@ -62,14 +62,14 @@ export default class Fighter {
         return this._name;
     }
 
-    changeState(newState) {
+    changeState(newState : string) {
         this.currentState = newState;
         this.animationFrame = 0;
         this.states[this.currentState].init();
     }
 
 
-    updateStageContraints(context) {
+    updateStageContraints(context : CanvasRenderingContext2D) {
         const WIDTH = 32;
         if (this.position.x > context.canvas.width - WIDTH ) {
             this.position.x = context.canvas.width - WIDTH;
@@ -92,7 +92,7 @@ export default class Fighter {
 
 
 
-        this.states[this.currentState].update(time, context);
+        this.states[this.currentState].update();
         this.updateStageContraints(context);
     }
 
