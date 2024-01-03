@@ -46,19 +46,23 @@ export default class Fighter {
             [FighterState.IDLE]: {
                 init: this.handleIdleInit.bind(this),
                 update: this.handleIdleState.bind(this),
-                validFrom: [FighterState.IDLE, FighterState.WALK_FORWARD, FighterState.JUMP_UP, FighterState.JUMP_FORWARD, FighterState.JUMP_BACKWARD]
+                validFrom: [
+                    FighterState.IDLE, FighterState.WALK_FORWARD, FighterState.JUMP_UP,
+                    FighterState.JUMP_FORWARD, FighterState.JUMP_BACKWARD,
+                    FighterState.CROUCH_UP
+                ]
 
             },
             [FighterState.WALK_FORWARD]: {
                 init: this.handleMoveInit.bind(this),
                 update: this.handleMoveState.bind(this),
-                validFrom: [FighterState.IDLE, FighterState.JUMP_BACKWARD]
+                validFrom: [FighterState.IDLE, FighterState.JUMP_BACKWARD, FighterState.WALK_BACKWARD]
 
             },
             [FighterState.WALK_BACKWARD]: {
                 init: this.handleMoveInit.bind(this),
                 update: this.handleMoveState.bind(this),
-                validFrom: [FighterState.IDLE, FighterState.JUMP_FORWARD]
+                validFrom: [FighterState.IDLE, FighterState.JUMP_FORWARD, FighterState.WALK_FORWARD]
             },
             [FighterState.JUMP_FORWARD]: {
                 init: this.handleJumpInit.bind(this),
@@ -70,9 +74,36 @@ export default class Fighter {
                 update: this.handleJumpState.bind(this),
                 validFrom: [FighterState.IDLE,FighterState.WALK_BACKWARD]
             },
+            [FighterState.CROUCH] : {
+                init: () => {},
+                update: () => {},
+                validFrom : [FighterState.CROUCH_DOWN],
+            },
+            [FighterState.CROUCH_DOWN] : {
+                init: () => {},
+                update: this.handleCrouchDownState.bind(this),
+                validFrom : [FighterState.IDLE, FighterState.WALK_FORWARD, FighterState.WALK_BACKWARD],
+            },
+            [FighterState.CROUCH_UP] : {
+                init: () => {},
+                update: this.handleCrouchUpState.bind(this),
+                validFrom : [FighterState.CROUCH],
+            },
         }
 
         this.changeState(FighterState.IDLE);
+    }
+
+    handleCrouchDownState = () => {
+        if(this.animations && this.animations[this.currentState][this.animationFrame][1] === -2) {
+            this.changeState(FighterState.CROUCH);
+        }
+    }
+
+    handleCrouchUpState = () => {
+        if(this.animations && this.animations[this.currentState][this.animationFrame][1] === -2) {
+            this.changeState(FighterState.IDLE);
+        }
     }
 
     handleJumpInit = () => {
