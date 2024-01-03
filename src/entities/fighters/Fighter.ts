@@ -1,7 +1,8 @@
-import {Position, FrameTime, FighterAnimations, Velocity} from '../../interfaces';
+import {FighterAnimations, FrameTime, Position, Velocity} from '../../interfaces';
 import {FighterState} from "../../constants/fighter.ts";
 import InitialVelocity from "../../interfaces/InitialVelocity.ts";
 import {STAGE_FLOOR} from "../../constants/stage.ts";
+
 export default class Fighter {
 
     private readonly _name: string;
@@ -9,7 +10,7 @@ export default class Fighter {
     protected frames: Map<string, number[][]>;
     private position: Position;
     private velocity : Velocity;
-    protected initialVelocity : InitialVelocity;
+    protected initialVelocity : InitialVelocity | undefined;
     private animationFrame : number;
     private animationTimer : number;
     private currentState : FighterState;
@@ -27,7 +28,7 @@ export default class Fighter {
         this.position  = { x, y };
         this.image = new Image();
         this.velocity = {x:0 ,y:0};
-        this.initialVelocity = { jump:0};
+        this.initialVelocity = undefined;
         this.frames= new Map();
         this.animationFrame = 0;
         this.animationTimer = 0;
@@ -37,33 +38,50 @@ export default class Fighter {
         this.gravity = 0;
         this.states = {
             [FighterState.JUMP_UP]: {
-                init: this.handleJumpUpInit.bind(this),
-                update: this.handleJumpUpState.bind(this)
+                init: this.handleJumpInit.bind(this),
+                update: this.handleJumpState.bind(this),
+                validFrom: [FighterState.IDLE]
 
             },
             [FighterState.IDLE]: {
                 init: this.handleIdleInit.bind(this),
-                update: this.handleIdleState.bind(this)
+                update: this.handleIdleState.bind(this),
+                validFrom: [FighterState.IDLE, FighterState.WALK_FORWARD, FighterState.JUMP_UP, FighterState.JUMP_FORWARD, FighterState.JUMP_BACKWARD]
 
             },
             [FighterState.WALK_FORWARD]: {
-                init: this.handleWalkForwardInit.bind(this),
-                update: this.handleWalkForwardState.bind(this)
+                init: this.handleMoveInit.bind(this),
+                update: this.handleMoveState.bind(this),
+                validFrom: [FighterState.IDLE, FighterState.JUMP_BACKWARD]
 
             },
             [FighterState.WALK_BACKWARD]: {
-                init: this.handleWalkBackwardInit.bind(this),
-                update: this.handleWalkBackwardState.bind(this)
+                init: this.handleMoveInit.bind(this),
+                update: this.handleMoveState.bind(this),
+                validFrom: [FighterState.IDLE, FighterState.JUMP_FORWARD]
+            },
+            [FighterState.JUMP_FORWARD]: {
+                init: this.handleJumpInit.bind(this),
+                update: this.handleJumpState.bind(this),
+                validFrom: [FighterState.IDLE, FighterState.WALK_FORWARD]
+            },
+            [FighterState.JUMP_BACKWARD]: {
+                init: this.handleJumpInit.bind(this),
+                update: this.handleJumpState.bind(this),
+                validFrom: [FighterState.IDLE,FighterState.WALK_BACKWARD]
             },
         }
 
         this.changeState(FighterState.IDLE);
     }
 
-    handleJumpUpInit = () => {
-        this.velocity.y = this.initialVelocity.jump;
+    handleJumpInit = () => {
+        if(this.initialVelocity) {
+            this.velocity.y = this.initialVelocity.jump;
+           this.handleMoveInit();
+        }
     }
-    handleJumpUpState = (time:FrameTime ) => {
+    handleJumpState = (time:FrameTime ) => {
         this.velocity.y += this.gravity * time.secondsPassed;
         if(this.position.y > STAGE_FLOOR) {
             this.position.y = STAGE_FLOOR;
@@ -78,25 +96,24 @@ export default class Fighter {
 
     }
 
-    handleWalkForwardInit = () => {
-        this.velocity.x = 150 * this.direction;
+    handleMoveInit = () => {
+        // @ts-ignore
+        this.velocity.x = this.initialVelocity?.x[this.currentState] ?? 0;
     }
-    handleWalkForwardState = () => {
+    handleMoveState = () => {
 
     }
-    handleWalkBackwardInit = () => {
-        this.velocity.x = -150 * this.direction;
 
-    }
-    handleWalkBackwardState = () => {
-
-    }
 
     get name(): string {
         return this._name;
     }
 
     changeState(newState : string) {
+
+        if( newState  as FighterState === this.currentState
+            || !this.states[newState  as FighterState].validFrom.includes(this.currentState)) return;
+
         this.currentState = newState as FighterState;
         this.animationFrame = 0;
         this.states[this.currentState].init();
@@ -118,8 +135,8 @@ export default class Fighter {
         if(this.animations) {
 
             const animation  = this.animations[this.currentState];
-            const [, frameDelay] = animation[this.animationFrame];
 
+            const [, frameDelay] = animation[this.animationFrame];
             if( time.previous > this.animationTimer+frameDelay) {
                 this.animationTimer = time.previous;
                 if(frameDelay > 0) {
@@ -133,7 +150,7 @@ export default class Fighter {
         }
     }
     update(time : FrameTime, context: CanvasRenderingContext2D) {
-        this.position.x += this.velocity.x * time.secondsPassed;
+        this.position.x += (this.velocity.x * this.direction) * time.secondsPassed;
         this.position.y += this.velocity.y * time.secondsPassed;
         this.states[this.currentState].update(time);
         this.updateAnimation(time);
@@ -143,6 +160,7 @@ export default class Fighter {
     draw(context: CanvasRenderingContext2D) {
         if(this.animations) {
             const [frameKey] = this.animations[this.currentState][this.animationFrame];
+
             const [
                 [x, y, width, height],
                 [originX, originY]
