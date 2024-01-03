@@ -1,39 +1,39 @@
 import './style.css'
-import { GameViewport } from './interfaces';
+import { GameViewport, FrameTime } from './interfaces';
 import { Ken } from "./entities/fighters/Ken.ts";
 import {Ryu} from "./entities/fighters/Ryu.ts";
 import { Stage } from "./entities/Stage.ts";
 import { FpsCounter} from "./entities/FpsCounter.ts";
-
-const gameViewport : GameViewport = {
-    WIDTH: 384,
-    HEIGHT: 224
-}
-
+import {STAGE_FLOOR} from "./constants/stage.ts";
+import {fighterDirection} from "./constants/fighter.ts";
 
 const canvas :HTMLCanvasElement = <HTMLCanvasElement>document.querySelector('canvas');
 const context: CanvasRenderingContext2D = <CanvasRenderingContext2D>canvas.getContext('2d');
-
-canvas.width = gameViewport.WIDTH;
-canvas.height = gameViewport.HEIGHT;
+context.imageSmoothingEnabled = false;
 
 const entities = [
     new Stage(),
-    new Ken(80, 110, 150),
-    new Ryu(80, 110, -150),
+    new Ken(280, STAGE_FLOOR, fighterDirection.LEFT),
+    new Ryu(104, STAGE_FLOOR, fighterDirection.RIGHT),
     new FpsCounter()
 ];
 
-let previousTime :number = 0;
-let secondsPassed :number = 0;
+let frameTime :FrameTime  = {
+    previous: 0,
+    secondsPassed: 0,
+};
+
 
 function animate (time : number) : void {
     requestAnimationFrame(animate);
-    secondsPassed = (time - previousTime) / 1000;
-    previousTime = time;
+    frameTime = {
+        secondsPassed : (time - frameTime.previous) / 1000,
+        previous : time
+    }
+
 
     for (const entity of entities) {
-        entity.update(secondsPassed, context);
+        entity.update(frameTime, context);
         entity.draw(context);
     }
 }

@@ -1,11 +1,13 @@
+
+import { FrameTime } from "../interfaces";
 export class FpsCounter {
     private fps : number;
     constructor() {
         this.fps = 0;
     }
 
-    update(secondsPassed : number  ) : void     {
-        this.fps = Math.round(1 / secondsPassed);
+    update(time : FrameTime  ) : void     {
+        this.fps = Math.round(1 / time.secondsPassed);
     }
     draw(context : CanvasRenderingContext2D) {
         context.fillStyle = 'back';
