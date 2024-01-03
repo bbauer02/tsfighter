@@ -7,7 +7,23 @@
     <title>Street Fighter | TypeScript Version</title>
   </head>
   <body>
-    <canvas width="384" height="224" ></canvas>
+    <form>
+      <div>
+        <input type="checkbox" name="fighter" id="ken" value="Ken">
+        <label for="ken">Ken</label>
+      </div>
+      <div>
+        <input type="checkbox" name="fighter" id="ryu" value="Ryu">
+        <label for="Ryu">Ryu</label>
+      </div>
+      <select id="state-dropdown" name="state"></select>
+        <button type="submit">Transition!</button>
+
+    </form>
+    <main>
+      <canvas width="384" height="224" ></canvas>
+    </main>
+
     <img src="./src/img/ken.png" alt="ken" />
     <img src="./src/img/ryu.png" alt="ryu" />
     <img src="./src/img/bg-ken.png" alt="stage" />

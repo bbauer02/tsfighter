@@ -1,5 +1,5 @@
 import Fighter from "./Fighter.ts";
-
+import {fighterState} from "../../constants/fighter.ts";
 export class Ken extends Fighter {
     constructor(x : number, y :number, velocity :number) {
         super('Ken', x, y, velocity);
@@ -23,8 +23,8 @@ export class Ken extends Fighter {
         ]);
 
         this.animations = {
-            'walkForwards': ['forwards-1', 'forwards-2', 'forwards-3', 'forwards-4', 'forwards-5', 'forwards-6'],
-            'walkBackwards': ['backwards-1', 'backwards-2', 'backwards-3', 'backwards-4', 'backwards-5', 'backwards-6'],
+            [fighterState.WALK_FORWARD]: ['forwards-1', 'forwards-2', 'forwards-3', 'forwards-4', 'forwards-5', 'forwards-6'],
+            [fighterState.WALK_BACKWARD]: ['backwards-1', 'backwards-2', 'backwards-3', 'backwards-4', 'backwards-5', 'backwards-6'],
         }
     }
 }
