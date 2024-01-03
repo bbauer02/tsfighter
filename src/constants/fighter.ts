@@ -4,9 +4,9 @@ export const fighterDirection : FighterDirection    = {
     RIGHT: 1
 };
 
-export const fighterState = {
-    IDLE : 'idle',
-    WALK_FORWARD: 'walkForwards',
-    WALK_BACKWARD: 'walkBackwards',
-    JUMP_UP: 'jump-up'
+export enum FighterState {
+    IDLE = 'idle',
+    WALK_FORWARD= 'walkForwards',
+    WALK_BACKWARD= 'walkBackwards',
+    JUMP_UP= 'jump-up'
 }

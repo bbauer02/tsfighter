@@ -5,12 +5,12 @@ import {Ryu} from "./entities/fighters/Ryu.ts";
 import { Stage } from "./entities/Stage.ts";
 import { FpsCounter} from "./entities/FpsCounter.ts";
 import {STAGE_FLOOR} from "./constants/stage.ts";
-import {fighterDirection, fighterState} from "./constants/fighter.ts";
+import {fighterDirection, FighterState} from "./constants/fighter.ts";
 import Fighter from "./entities/fighters/Fighter.ts";
 
 function populateMoveDropdown() :void {
     const dropdown :HTMLElement = <HTMLElement>document.getElementById('state-dropdown');
-    Object.entries(fighterState).forEach(([, value ]) => {
+    Object.entries(FighterState).forEach(([, value ]) => {
         const option :HTMLOptionElement = document.createElement('option');
         option.setAttribute('value', value);
         option.innerText = value;
