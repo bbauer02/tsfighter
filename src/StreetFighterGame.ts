@@ -8,6 +8,7 @@ import {STAGE_FLOOR} from "./constants/stage.ts";
 import {fighterDirection} from "./constants/fighter.ts";
 import Fighter from "./entities/fighters/Fighter.ts";
 import {registerKeyboardEvents} from './InputHandle.ts';
+import {Shadow} from "./entities/fighters/shadow.ts";
 
 export class StreetFighterGame {
 
@@ -26,6 +27,7 @@ export class StreetFighterGame {
         ]
         this.entities = [
             new Stage(),
+            ...this.fighters.map(fighter => new Shadow(fighter)),
             ...this.fighters,
             new FpsCounter()
         ];

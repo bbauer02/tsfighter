@@ -10,7 +10,7 @@ export default class Fighter {
     private readonly _name: string;
     protected image: HTMLImageElement;
     protected frames: Map<string, number[][]>;
-    private position: Position;
+    position: Position;
     private velocity : Velocity;
     protected initialVelocity : InitialVelocity | undefined;
     private animationFrame : number;
