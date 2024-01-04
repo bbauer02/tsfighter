@@ -18,7 +18,7 @@ export const controls  = [
         keyboard : {
             [Control.LEFT] : 'KeyA',
             [Control.RIGHT] : 'KeyD',
-            [Control.UP] : 'KeyZ',
+            [Control.UP] : 'KeyW',
             [Control.DOWN] : 'KeyS',
         }
     }

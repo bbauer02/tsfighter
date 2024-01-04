@@ -127,16 +127,20 @@ export default class Fighter {
         this.velocity.y = 0;
     }
     handleIdleState = () => {
+        if(control.isUp(this.playerId)) this.changeState(FighterState.JUMP_UP);
         if(control.isBackward(this.playerId, this.direction)) this.changeState(FighterState.WALK_BACKWARD);
         if(control.isForward(this.playerId, this.direction)) this.changeState(FighterState.WALK_FORWARD);
     }
 
     handleWalkForwardState = () => {
         if(!control.isForward(this.playerId, this.direction)) this.changeState(FighterState.IDLE);
+        if(control.isUp(this.playerId)) this.changeState(FighterState.JUMP_FORWARD);
     }
 
     handleWalkBackwardState = () => {
         if(!control.isBackward(this.playerId, this.direction)) this.changeState(FighterState.IDLE);
+        if(control.isUp(this.playerId)) this.changeState(FighterState.JUMP_BACKWARD);
+
     }
 
     handleMoveInit = () => {
