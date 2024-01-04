@@ -2,10 +2,11 @@ import {FighterAnimations, FrameTime, Position, Velocity} from '../../interfaces
 import {FighterState} from "../../constants/fighter.ts";
 import InitialVelocity from "../../interfaces/InitialVelocity.ts";
 import {STAGE_FLOOR} from "../../constants/stage.ts";
-import {isKeyDown, isKeyUp} from "../../InputHandle.ts";
+import * as control from "../../InputHandle.ts";
 
 export default class Fighter {
 
+    private playerId : number;
     private readonly _name: string;
     protected image: HTMLImageElement;
     protected frames: Map<string, number[][]>;
@@ -24,7 +25,8 @@ export default class Fighter {
 
 
 
-    constructor(name: string, x: number, y: number, direction : number) {
+    constructor(name: string, x: number, y: number, direction : number, playerId : number) {
+        this.playerId = playerId;
         this._name = name;
         this.position  = { x, y };
         this.image = new Image();
@@ -125,16 +127,16 @@ export default class Fighter {
         this.velocity.y = 0;
     }
     handleIdleState = () => {
-        if(isKeyDown('ArrowLeft')) this.changeState(FighterState.WALK_BACKWARD);
-        if(isKeyDown('ArrowRight')) this.changeState(FighterState.WALK_FORWARD);
+        if(control.isBackward(this.playerId, this.direction)) this.changeState(FighterState.WALK_BACKWARD);
+        if(control.isForward(this.playerId, this.direction)) this.changeState(FighterState.WALK_FORWARD);
     }
 
     handleWalkForwardState = () => {
-        if(isKeyUp('ArrowRight')) this.changeState(FighterState.IDLE);
+        if(!control.isForward(this.playerId, this.direction)) this.changeState(FighterState.IDLE);
     }
 
     handleWalkBackwardState = () => {
-        if(isKeyUp('ArrowLeft')) this.changeState(FighterState.IDLE);
+        if(!control.isBackward(this.playerId, this.direction)) this.changeState(FighterState.IDLE);
     }
 
     handleMoveInit = () => {

@@ -2,8 +2,8 @@ import Fighter from "./Fighter.ts";
 import {FighterState} from "../../constants/fighter.ts";
 
 export class Ryu extends Fighter {
-    constructor(x : number, y :number, velocity :number) {
-        super('Ryu', x, y, velocity);
+    constructor(x : number, y :number, direction :number, playerId: number) {
+        super('Ryu', x, y, direction,playerId );
         this.image = <HTMLImageElement>document.querySelector('img[alt="ryu"]');
         this.frames = new Map([
 

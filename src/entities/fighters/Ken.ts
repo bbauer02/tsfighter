@@ -1,8 +1,8 @@
 import Fighter from "./Fighter.ts";
 import {FighterState} from "../../constants/fighter.ts";
 export class Ken extends Fighter {
-    constructor(x : number, y :number, velocity :number) {
-        super('Ken', x, y, velocity);
+    constructor(x : number, y :number, direction :number, playerId: number) {
+        super('Ken', x, y, direction, playerId);
         this.image = <HTMLImageElement>document.querySelector('img[alt="ken"]');
         this.frames = new Map([
             // IDLE
