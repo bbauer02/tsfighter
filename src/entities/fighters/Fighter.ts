@@ -2,6 +2,7 @@ import {FighterAnimations, FrameTime, Position, Velocity} from '../../interfaces
 import {FighterState} from "../../constants/fighter.ts";
 import InitialVelocity from "../../interfaces/InitialVelocity.ts";
 import {STAGE_FLOOR} from "../../constants/stage.ts";
+import {isKeyDown, isKeyUp} from "../../InputHandle.ts";
 
 export default class Fighter {
 
@@ -47,7 +48,7 @@ export default class Fighter {
                 init: this.handleIdleInit.bind(this),
                 update: this.handleIdleState.bind(this),
                 validFrom: [
-                    FighterState.IDLE, FighterState.WALK_FORWARD, FighterState.JUMP_UP,
+                    FighterState.IDLE, FighterState.WALK_FORWARD, FighterState.WALK_BACKWARD, FighterState.JUMP_UP,
                     FighterState.JUMP_FORWARD, FighterState.JUMP_BACKWARD,
                     FighterState.CROUCH_UP
                 ]
@@ -55,13 +56,13 @@ export default class Fighter {
             },
             [FighterState.WALK_FORWARD]: {
                 init: this.handleMoveInit.bind(this),
-                update: this.handleMoveState.bind(this),
+                update: this.handleWalkForwardState.bind(this),
                 validFrom: [FighterState.IDLE, FighterState.JUMP_BACKWARD, FighterState.WALK_BACKWARD]
 
             },
             [FighterState.WALK_BACKWARD]: {
                 init: this.handleMoveInit.bind(this),
-                update: this.handleMoveState.bind(this),
+                update: this.handleWalkBackwardState.bind(this),
                 validFrom: [FighterState.IDLE, FighterState.JUMP_FORWARD, FighterState.WALK_FORWARD]
             },
             [FighterState.JUMP_FORWARD]: {
@@ -124,7 +125,16 @@ export default class Fighter {
         this.velocity.y = 0;
     }
     handleIdleState = () => {
+        if(isKeyDown('ArrowLeft')) this.changeState(FighterState.WALK_BACKWARD);
+        if(isKeyDown('ArrowRight')) this.changeState(FighterState.WALK_FORWARD);
+    }
 
+    handleWalkForwardState = () => {
+        if(isKeyUp('ArrowRight')) this.changeState(FighterState.IDLE);
+    }
+
+    handleWalkBackwardState = () => {
+        if(isKeyUp('ArrowLeft')) this.changeState(FighterState.IDLE);
     }
 
     handleMoveInit = () => {
@@ -141,7 +151,6 @@ export default class Fighter {
     }
 
     changeState(newState : string) {
-
         if( newState  as FighterState === this.currentState
             || !this.states[newState  as FighterState].validFrom.includes(this.currentState)) return;
 

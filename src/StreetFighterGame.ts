@@ -7,7 +7,7 @@ import { FpsCounter} from "./entities/FpsCounter.ts";
 import {STAGE_FLOOR} from "./constants/stage.ts";
 import {fighterDirection} from "./constants/fighter.ts";
 import Fighter from "./entities/fighters/Fighter.ts";
-
+import {registerKeyboardEvents} from './InputHandle.ts';
 
 export class StreetFighterGame {
 
@@ -81,6 +81,7 @@ export class StreetFighterGame {
     }
 
     start() {
+        registerKeyboardEvents();
         window.requestAnimationFrame(this.frame.bind(this));
     }
 
