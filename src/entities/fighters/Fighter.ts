@@ -21,10 +21,6 @@ export default class Fighter {
     protected gravity: number;
     protected states;
 
-
-
-
-
     constructor(name: string, x: number, y: number, direction : number, playerId : number) {
         this.playerId = playerId;
         this._name = name;
@@ -79,11 +75,11 @@ export default class Fighter {
             },
             [FighterState.CROUCH] : {
                 init: () => {},
-                update: () => {},
+                update: this.handleCrounchState.bind(this),
                 validFrom : [FighterState.CROUCH_DOWN],
             },
             [FighterState.CROUCH_DOWN] : {
-                init: () => {},
+                init: this.handleCrounchDownInit.bind(this),
                 update: this.handleCrouchDownState.bind(this),
                 validFrom : [FighterState.IDLE, FighterState.WALK_FORWARD, FighterState.WALK_BACKWARD],
             },
@@ -95,6 +91,16 @@ export default class Fighter {
         }
 
         this.changeState(FighterState.IDLE);
+    }
+
+    handleCrounchDownInit = () => {
+        this.handleIdleInit();
+    }
+    handleCrounchInit = () => {
+
+    }
+    handleCrounchState = () => {
+        if(!control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_UP);
     }
 
     handleCrouchDownState = () => {
@@ -128,6 +134,8 @@ export default class Fighter {
     }
     handleIdleState = () => {
         if(control.isUp(this.playerId)) this.changeState(FighterState.JUMP_UP);
+        if(control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN);
+
         if(control.isBackward(this.playerId, this.direction)) this.changeState(FighterState.WALK_BACKWARD);
         if(control.isForward(this.playerId, this.direction)) this.changeState(FighterState.WALK_FORWARD);
     }
@@ -135,11 +143,14 @@ export default class Fighter {
     handleWalkForwardState = () => {
         if(!control.isForward(this.playerId, this.direction)) this.changeState(FighterState.IDLE);
         if(control.isUp(this.playerId)) this.changeState(FighterState.JUMP_FORWARD);
+        if(control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN);
+
     }
 
     handleWalkBackwardState = () => {
         if(!control.isBackward(this.playerId, this.direction)) this.changeState(FighterState.IDLE);
         if(control.isUp(this.playerId)) this.changeState(FighterState.JUMP_BACKWARD);
+        if(control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN);
 
     }
 
