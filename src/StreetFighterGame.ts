@@ -81,7 +81,6 @@ export class StreetFighterGame {
     }
 
     start() {
-        document.addEventListener('submit', this.handleFormSubmit.bind(this));
         window.requestAnimationFrame(this.frame.bind(this));
     }
 
