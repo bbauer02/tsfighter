@@ -47,7 +47,7 @@ export class Ryu extends Fighter {
             ['jump-roll-7', [[883, 261, 54, 109], [31,113]]],
 
             // Jump First / Lat frame
-            ['jump-land', [[660,1060,55,85], [29,83]]],
+            ['jump-land', [[7,268,55,85], [29,83]]],
 
 
             // Crouch

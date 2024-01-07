@@ -42,7 +42,7 @@ export default class Fighter {
                 init: this.handleJumpStartInit.bind(this),
                 update: this.handleJumpStartState.bind(this),
                 validFrom: [
-                    FighterState.IDLE,
+                    FighterState.IDLE, FighterState.JUMP_LAND,
                     FighterState.WALK_BACKWARD, FighterState.WALK_FORWARD
                 ]
             },
@@ -65,18 +65,21 @@ export default class Fighter {
                 validFrom: [FighterState.JUMP_START,]
             },
             [FighterState.JUMP_LAND]: {
-                init: () => {},
-                update: () => {},
-                validFrom: []
+                init: this.handleJumpLandInit.bind(this),
+                update: this.handleJumpLandState.bind(this),
+                validFrom: [
+                    FighterState.JUMP_UP, FighterState.JUMP_FORWARD, FighterState.JUMP_BACKWARD
+                ]
             },
 
             [FighterState.IDLE]: {
                 init: this.handleIdleInit.bind(this),
                 update: this.handleIdleState.bind(this),
                 validFrom: [
+                    undefined,
                     FighterState.IDLE, FighterState.WALK_FORWARD, FighterState.WALK_BACKWARD, FighterState.JUMP_UP,
                     FighterState.JUMP_FORWARD, FighterState.JUMP_BACKWARD,
-                    FighterState.CROUCH_UP
+                    FighterState.CROUCH_UP, FighterState.JUMP_LAND
                 ]
 
             },
@@ -143,7 +146,7 @@ export default class Fighter {
         this.velocity.y += this.gravity * time.secondsPassed;
         if(this.position.y > STAGE_FLOOR) {
             this.position.y = STAGE_FLOOR;
-            this.changeState(FighterState.IDLE);
+            this.changeState(FighterState.JUMP_LAND);
         }
     }
     handleIdleInit = () => {
@@ -208,6 +211,22 @@ export default class Fighter {
 
     handleJumpStartInit() {
         this.handleIdleInit();
+    }
+    handleJumpLandInit() {
+        this.handleIdleInit();
+    }
+
+    handleJumpLandState() {
+        if(this.animationFrame < 1) return;
+
+        if(!control.isIdle(this.playerId)) {
+            this.handleIdleState();
+        } else if(this.animations && this.animations[this.currentState][this.animationFrame][1] !== -2) {
+            return;
+        }
+
+        this.changeState(FighterState.IDLE);
+
     }
     handleJumpStartState() {
         if(this.animations && this.animations[this.currentState][this.animationFrame][1] === -2) {

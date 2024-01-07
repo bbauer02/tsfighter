@@ -92,3 +92,5 @@ export const isDown = (id : number) => isKeyDown(controls[id].keyboard[Control.D
 
 export const isForward = (id : number, direction : number) => direction === fighterDirection.RIGHT ? isRight(id) : isLeft(id);
 export const isBackward = (id : number, direction : number) => direction === fighterDirection.LEFT ? isRight(id) : isLeft(id);
+
+export const isIdle = (id : number) => !(isLeft(id) || isRight(id) || isUp(id) || isDown(id))
