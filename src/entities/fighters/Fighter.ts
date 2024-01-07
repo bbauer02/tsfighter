@@ -23,6 +23,8 @@ export default class Fighter {
     protected states;
     opponent : Fighter | undefined = undefined;
 
+    pushBox = {x: 0, y:0, width:0, height:0};
+
     // @ts-ignore
     constructor(name: string, x: number, y: number, direction : number, playerId : number) {
         this.playerId = playerId;
@@ -231,15 +233,28 @@ export default class Fighter {
     }
 
     getDirection = () => {
-        if(this.opponent &&  this.position.x >= this.opponent.position.x) {
+        if(this.opponent &&  this.position.x + this.pushBox.width
+            <= this.opponent.position.x + this.opponent.pushBox.x) {
+            return fighterDirection.RIGHT;
+        } else if (this.opponent && this.position.x + this.pushBox.x
+            >= this.opponent.position.x + this.opponent?.pushBox.x + this.opponent?.pushBox.width ) {
             return fighterDirection.LEFT;
         }
-        else {
-            return fighterDirection.RIGHT;
-        }
-
+            return this.direction;
     }
 
+    getPushBox(frameKey: string) {
+        const framesData = this.frames.get(frameKey);
+
+        if(framesData) {
+            const [,, [x,y,width, height] = [0,0,0,0]] = framesData;
+            console.log(framesData)
+            return {x, y, width, height}
+        }
+        else {
+            return {x:0, y:0, width:0, height: 0};
+        }
+    }
     changeState(newState : string) {
         if( newState  as FighterState === this.currentState
             || !this.states[newState  as FighterState].validFrom.includes(this.currentState)) return;
@@ -251,13 +266,13 @@ export default class Fighter {
 
 
     updateStageContraints(context : CanvasRenderingContext2D) {
-        const WIDTH = 32;
-        if (this.position.x > context.canvas.width - WIDTH ) {
-            this.position.x = context.canvas.width - WIDTH;
+
+        if (this.position.x > context.canvas.width - this.pushBox.width ) {
+            this.position.x = context.canvas.width - this.pushBox.width;
         }
 
-        if (this.position.x < WIDTH ) {
-            this.position.x = WIDTH;
+        if (this.position.x < this.pushBox.width ) {
+            this.position.x = this.pushBox.width;
         }
     }
 
@@ -306,11 +321,13 @@ export default class Fighter {
 
             const animation  = this.animations[this.currentState];
 
-            const [, frameDelay] = animation[this.animationFrame];
+            const [ frameKey, frameDelay] = animation[this.animationFrame];
+
             if( time.previous > this.animationTimer+frameDelay) {
                 this.animationTimer = time.previous;
                 if(frameDelay > 0) {
                     this.animationFrame++;
+                    this.pushBox = this.getPushBox(frameKey);
                 }
 
                 if(this.animationFrame > animation.length-1)  {
@@ -349,13 +366,43 @@ export default class Fighter {
     }
 
     drawDebug(context: CanvasRenderingContext2D) {
+
+        const [frameKey] = this.animations[this.currentState][this.animationFrame];
+        const pushBox = this.getPushBox(frameKey);
+
+        context.lineWidth = 1;
+
+        // Push Box
+
+        context.beginPath();
+        context.strokeStyle = '#55FF55';
+        context.fillStyle = '#55FF5555';
+        context.fillRect(
+            Math.floor(this.position.x + pushBox.x) + 0.5,
+            Math.floor(this.position.y + pushBox.y) + 0.5,
+            pushBox.width,
+            pushBox.height
+        );
+
+        context.rect(
+            Math.floor(this.position.x + pushBox.x) + 0.5,
+            Math.floor(this.position.y + pushBox.y) + 0.5,
+            pushBox.width,
+            pushBox.height
+        );
+
+        context.stroke();
+
+
+
+
         context.lineWidth = 1;
         context.beginPath();
         context.strokeStyle = 'white';
-        context.moveTo(Math.floor(this.position.x-4.5), Math.floor(this.position.y));
-        context.lineTo(Math.floor(this.position.x+4.5), Math.floor(this.position.y));
-        context.moveTo(Math.floor(this.position.x), Math.floor(this.position.y-4.5));
-        context.lineTo(Math.floor(this.position.x), Math.floor(this.position.y+4.5));
+        context.moveTo(Math.floor(this.position.x-4), Math.floor(this.position.y) -0.5);
+        context.lineTo(Math.floor(this.position.x+5), Math.floor(this.position.y) -0.5);
+        context.moveTo(Math.floor(this.position.x)+0.5, Math.floor(this.position.y-5));
+        context.lineTo(Math.floor(this.position.x)+0.5, Math.floor(this.position.y+4));
         context.stroke();
     }
 

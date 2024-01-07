@@ -19,3 +19,11 @@ export enum FighterState {
     IDLE_TURN = 'idleTurn',
     CROUCH_TURN = 'crouchTurn'
 }
+
+export const PushBox   = {
+    IDLE : [-16,-80,32,78],
+    JUMP : [-16,-91,32,66],
+    BEND : [-16,-91,32,66],
+    CROUCH : [-16,-50,32,50],
+}
+
