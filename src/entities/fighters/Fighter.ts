@@ -3,6 +3,8 @@ import {fighterDirection, FighterState} from "../../constants/fighter.ts";
 import InitialVelocity from "../../interfaces/InitialVelocity.ts";
 import {STAGE_FLOOR} from "../../constants/stage.ts";
 import * as control from "../../InputHandle.ts";
+import {rectsOverlap} from "../../utils/collisions.ts";
+import frameTime from "../../interfaces/FrameTime.ts";
 
 
 export default class Fighter {
@@ -207,8 +209,7 @@ export default class Fighter {
 
     handleIdleTurnState() {
         this.handleIdleState();
-
-        if(this.animations && this.animations[this.currentState][this.animationFrame][1] !== -2) return;
+       if(this.animations && this.animations[this.currentState][this.animationFrame][1] !== -2) return;
         this.changeState(FighterState.IDLE);
     }
 
@@ -232,11 +233,23 @@ export default class Fighter {
         return this._name;
     }
 
+    hasCollidedWithOpponent = () =>
+        this.opponent && rectsOverlap(
+            this.position.x + this.pushBox.x,
+            this.position.y + this.pushBox.y,
+            this.pushBox.width,
+            this.pushBox.height,
+            this.opponent.position.x + this.pushBox.x,
+            this.opponent.position.y! + this.pushBox.y,
+            this.opponent.pushBox.width,
+            this.opponent.pushBox.height
+        );
+
     getDirection = () => {
-        if(this.opponent &&  this.position.x + this.pushBox.width
+        if(  this.opponent&&this.position.x + this.pushBox.width
             <= this.opponent.position.x + this.opponent.pushBox.x) {
             return fighterDirection.RIGHT;
-        } else if (this.opponent && this.position.x + this.pushBox.x
+        } else if ( this.opponent&&this.position.x + this.pushBox.x
             >= this.opponent.position.x + this.opponent?.pushBox.x + this.opponent?.pushBox.width ) {
             return fighterDirection.LEFT;
         }
@@ -248,7 +261,6 @@ export default class Fighter {
 
         if(framesData) {
             const [,, [x,y,width, height] = [0,0,0,0]] = framesData;
-            console.log(framesData)
             return {x, y, width, height}
         }
         else {
@@ -265,7 +277,7 @@ export default class Fighter {
     }
 
 
-    updateStageContraints(context : CanvasRenderingContext2D) {
+    updateStageContraints(time : frameTime, context : CanvasRenderingContext2D) {
 
         if (this.position.x > context.canvas.width - this.pushBox.width ) {
             this.position.x = context.canvas.width - this.pushBox.width;
@@ -273,6 +285,35 @@ export default class Fighter {
 
         if (this.position.x < this.pushBox.width ) {
             this.position.x = this.pushBox.width;
+        }
+
+        if(this.opponent&&this.hasCollidedWithOpponent()) {
+            if(this.position.x <= this.opponent.position.x) {
+                this.position.x = Math.max(
+                    (this.opponent.position.x + this.opponent.pushBox.x) - (this.pushBox.x + this.pushBox.width),
+                    this.pushBox.width
+                );
+
+                if([
+                    FighterState.IDLE, FighterState.CROUCH, FighterState.JUMP_UP,
+                    FighterState.JUMP_FORWARD, FighterState.JUMP_BACKWARD].includes(this.opponent.currentState)) {
+                    this.opponent.position.x += 66 * time.secondsPassed;
+                }
+            }
+
+            if(this.position.x >= this.opponent.position.x) {
+                this.position.x = Math.min(
+                    (this.opponent.position.x + this.opponent.pushBox.x + this.opponent.pushBox.width)
+                    + (this.pushBox.width + this.pushBox.x ),
+                    context.canvas.width - this.pushBox.width,
+                );
+
+                if([
+                    FighterState.IDLE, FighterState.CROUCH, FighterState.JUMP_UP,
+                    FighterState.JUMP_FORWARD, FighterState.JUMP_BACKWARD].includes(this.opponent.currentState)) {
+                    this.opponent.position.x -= 66 * time.secondsPassed;
+                }
+            }
         }
     }
 
@@ -342,7 +383,7 @@ export default class Fighter {
 
         this.states[this.currentState].update(time);
         this.updateAnimation(time);
-        this.updateStageContraints(context);
+        this.updateStageContraints(time, context);
     }
 
     draw(context: CanvasRenderingContext2D) {
