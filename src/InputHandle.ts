@@ -1,4 +1,4 @@
-import {Control, controls, GamePadThumbstick} from "./constants/control.ts";
+import {Control, controls} from "./constants/control.ts";
 import {fighterDirection} from "./constants/fighter.ts";
 
 const heldKeys : Set<string> = new Set();
@@ -29,12 +29,12 @@ export function registerKeyboardEvents() {
 }
 
 
-function handleGamepadConnected(event ) {
+function handleGamepadConnected(event : GamepadEvent ) {
     const { gamepad : {index, axes, buttons }} = event;
     gamePads.set(index, {axes, buttons});
 }
 
-function handleGamepadDisconnected(event ) {
+function handleGamepadDisconnected(event : GamepadEvent ) {
     const { gamepad : {index}} = event;
     gamePads.delete(index);
 }
@@ -61,13 +61,13 @@ export function pollGamepads() {
 export const isKeyDown  = (code:string) : boolean => heldKeys.has(code);
 export const isKeyUp  = (code:string) : boolean => !heldKeys.has(code);
 
-export const isButtonDown = (padId , button) => {
+export const isButtonDown = (padId :number , button:number) => {
     return gamePads.get(padId)?.buttons[button].pressed
 };
-export const isButtonUp = (padId , button ) => !gamePads.get(padId)?.buttons[button].pressed;
+export const isButtonUp = (padId :number, button :number) => !gamePads.get(padId)?.buttons[button].pressed;
 
-export const isAxeGreater = (padId, axeId, value) => gamePads.get(padId)?.axes[axeId] >= value;
-export const isAxeLower = (padId, axeId, value) => gamePads.get(padId)?.axes[axeId] <= value;
+export const isAxeGreater = (padId:number, axeId:number, value:number) => gamePads.get(padId)?.axes[axeId] >= value;
+export const isAxeLower = (padId:number, axeId:number, value:number) => gamePads.get(padId)?.axes[axeId] <= value;
 
 export const isLeft = (id : number) => isKeyDown(controls[id].keyboard[Control.LEFT])
     || isButtonDown(id, controls[id].gamePad[Control.LEFT])

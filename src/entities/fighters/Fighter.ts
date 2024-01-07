@@ -1,5 +1,5 @@
 import {FighterAnimations, FrameTime, Position, Velocity} from '../../interfaces';
-import {fighterDirection, FighterState} from "../../constants/fighter.ts";
+import {fighterDirection, FighterState, FrameDelay, PUSH_FRICTION} from "../../constants/fighter.ts";
 import InitialVelocity from "../../interfaces/InitialVelocity.ts";
 import {STAGE_FLOOR} from "../../constants/stage.ts";
 import * as control from "../../InputHandle.ts";
@@ -130,7 +130,7 @@ export default class Fighter {
     }
 
     handleCrounchDownInit = () => {
-        this.handleIdleInit();
+        this.resetVelocity();
     }
     handleCrounchInit = () => {
 
@@ -147,7 +147,7 @@ export default class Fighter {
     }
 
     handleCrouchDownState = () => {
-        if(this.animations && this.animations[this.currentState][this.animationFrame][1] === -2) {
+        if(this.isAnimationCompleted()) {
             this.changeState(FighterState.CROUCH);
         }
 
@@ -158,7 +158,7 @@ export default class Fighter {
     }
 
     handleCrouchUpState = () => {
-        if(this.animations && this.animations[this.currentState][this.animationFrame][1] === -2) {
+        if(this.isAnimationCompleted()) {
             this.changeState(FighterState.IDLE);
         }
     }
@@ -177,17 +177,24 @@ export default class Fighter {
         }
     }
     handleIdleInit = () => {
-        this.velocity.x = 0;
-        this.velocity.y = 0;
+        this.resetVelocity();
     }
     handleIdleState = () => {
-        if(control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START);
-        if(control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN);
-
-        if(control.isBackward(this.playerId, this.direction)) this.changeState(FighterState.WALK_BACKWARD);
-        if(control.isForward(this.playerId, this.direction)) this.changeState(FighterState.WALK_FORWARD);
+        if(control.isUp(this.playerId)) {
+            this.changeState(FighterState.JUMP_START);
+        }
+        else if(control.isDown(this.playerId)) {
+            this.changeState(FighterState.CROUCH_DOWN);
+        }
+        else if(control.isBackward(this.playerId, this.direction)) {
+            this.changeState(FighterState.WALK_BACKWARD);
+        }
+        else if(control.isForward(this.playerId, this.direction)) {
+            this.changeState(FighterState.WALK_FORWARD);
+        }
 
         const newDirection = this.getDirection();
+
         if(newDirection !== this.direction) {
             this.direction = newDirection;
             this.changeState(FighterState.IDLE_TURN);
@@ -195,18 +202,30 @@ export default class Fighter {
     }
 
     handleWalkForwardState = () => {
-        if(!control.isForward(this.playerId, this.direction)) this.changeState(FighterState.IDLE);
-        if(control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START);
-        if(control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN);
+        if(!control.isForward(this.playerId, this.direction)) {
+            this.changeState(FighterState.IDLE);
+        }
+        else if(control.isUp(this.playerId)) {
+            this.changeState(FighterState.JUMP_START);
+        }
+        else if(control.isDown(this.playerId)) {
+            this.changeState(FighterState.CROUCH_DOWN);
+        }
 
         this.direction = this.getDirection();
 
     }
 
     handleWalkBackwardState = () => {
-        if(!control.isBackward(this.playerId, this.direction)) this.changeState(FighterState.IDLE);
-        if(control.isUp(this.playerId)) this.changeState(FighterState.JUMP_START);
-        if(control.isDown(this.playerId)) this.changeState(FighterState.CROUCH_DOWN);
+        if(!control.isBackward(this.playerId, this.direction)) {
+            this.changeState(FighterState.IDLE);
+        }
+        else if(control.isUp(this.playerId)) {
+            this.changeState(FighterState.JUMP_START);
+        }
+        else if(control.isDown(this.playerId)) {
+            this.changeState(FighterState.CROUCH_DOWN);
+        }
 
         this.direction = this.getDirection();
 
@@ -214,14 +233,14 @@ export default class Fighter {
 
     handleIdleTurnState() {
         this.handleIdleState();
-       if(this.animations && this.animations[this.currentState][this.animationFrame][1] !== -2) return;
+       if(!this.isAnimationCompleted()) return;
         this.changeState(FighterState.IDLE);
     }
 
     handleCrouchTurnState() {
         this.handleCrounchState();
 
-        if(this.animations && this.animations[this.currentState][this.animationFrame][1] !== -2) return;
+        if(!this.isAnimationCompleted()) return;
         this.changeState(FighterState.CROUCH);
     }
 
@@ -249,6 +268,13 @@ export default class Fighter {
             this.opponent.pushBox.width,
             this.opponent.pushBox.height
         );
+
+    isAnimationCompleted = () => this.animations && this.animations[this.currentState][this.animationFrame][1] ===  FrameDelay.TRANSITION;
+
+    resetVelocity() {
+        this.velocity.x = 0;
+        this.velocity.y = 0;
+    }
 
     getDirection = () => {
         if(  this.opponent&&this.position.x + this.pushBox.width
@@ -282,7 +308,7 @@ export default class Fighter {
     }
 
 
-    updateStageContraints(time : frameTime, context : CanvasRenderingContext2D) {
+    updateStageConstraints(time : frameTime, context : CanvasRenderingContext2D) {
 
         if (this.position.x > context.canvas.width - this.pushBox.width ) {
             this.position.x = context.canvas.width - this.pushBox.width;
@@ -302,7 +328,7 @@ export default class Fighter {
                 if([
                     FighterState.IDLE, FighterState.CROUCH, FighterState.JUMP_UP,
                     FighterState.JUMP_FORWARD, FighterState.JUMP_BACKWARD].includes(this.opponent.currentState)) {
-                    this.opponent.position.x += 66 * time.secondsPassed;
+                    this.opponent.position.x += PUSH_FRICTION * time.secondsPassed;
                 }
             }
 
@@ -316,17 +342,17 @@ export default class Fighter {
                 if([
                     FighterState.IDLE, FighterState.CROUCH, FighterState.JUMP_UP,
                     FighterState.JUMP_FORWARD, FighterState.JUMP_BACKWARD].includes(this.opponent.currentState)) {
-                    this.opponent.position.x -= 66 * time.secondsPassed;
+                    this.opponent.position.x -= PUSH_FRICTION * time.secondsPassed;
                 }
             }
         }
     }
 
     handleJumpStartInit() {
-        this.handleIdleInit();
+        this.resetVelocity();
     }
     handleJumpLandInit() {
-        this.handleIdleInit();
+        this.resetVelocity();
     }
 
     handleJumpLandState() {
@@ -346,13 +372,13 @@ export default class Fighter {
                 newState = FighterState.IDLE_TURN;
             }
             else {
-                if(this.animations && this.animations[this.currentState][this.animationFrame][1] !== -2) return;
+                if(!this.isAnimationCompleted()) return;
             }
         }
         this.changeState(newState);
     }
     handleJumpStartState() {
-        if(this.animations && this.animations[this.currentState][this.animationFrame][1] === -2) {
+        if(this.isAnimationCompleted()) {
             if(control.isBackward(this.playerId, this.direction)) {
                 this.changeState(FighterState.JUMP_BACKWARD)
             } else if (control.isForward(this.playerId, this.direction)) {
@@ -371,7 +397,7 @@ export default class Fighter {
 
             if( time.previous > this.animationTimer+frameDelay) {
                 this.animationTimer = time.previous;
-                if(frameDelay > 0) {
+                if(frameDelay > FrameDelay.FREEZE) {
                     this.animationFrame++;
                     this.pushBox = this.getPushBox(frameKey);
                 }
@@ -388,7 +414,7 @@ export default class Fighter {
 
         this.states[this.currentState].update(time);
         this.updateAnimation(time);
-        this.updateStageContraints(time, context);
+        this.updateStageConstraints(time, context);
     }
 
     draw(context: CanvasRenderingContext2D) {
@@ -412,7 +438,7 @@ export default class Fighter {
     }
 
     drawDebug(context: CanvasRenderingContext2D) {
-
+        if(!this.animations) return;
         const [frameKey] = this.animations[this.currentState][this.animationFrame];
         const pushBox = this.getPushBox(frameKey);
 

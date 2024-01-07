@@ -27,3 +27,9 @@ export const PushBox   = {
     CROUCH : [-16,-50,32,50],
 }
 
+export const FrameDelay = {
+    FREEZE:0,
+    TRANSITION: -1
+}
+
+export const PUSH_FRICTION = 66;

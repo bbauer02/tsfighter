@@ -10,9 +10,9 @@ export class FpsCounter {
         this.fps = Math.round(1 / time.secondsPassed);
     }
     draw(context : CanvasRenderingContext2D) {
-        context.fillStyle = 'back';
-        context.font = 'bold 20px Arial';
-        context.textAlign = 'center';
-        context.fillText(`FPS : ${this.fps}`, context.canvas.width/2, 30);
+        context.font = '14px Arial';
+        context.fillStyle = '#00FF00';
+        context.textAlign = 'right';
+        context.fillText(`${this.fps}`, context.canvas.width-2, context.canvas.height-2);
     }
 }
