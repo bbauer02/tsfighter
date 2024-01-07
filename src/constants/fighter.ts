@@ -8,9 +8,11 @@ export enum FighterState {
     IDLE = 'idle',
     WALK_FORWARD= 'walkForwards',
     WALK_BACKWARD= 'walkBackwards',
+    JUMP_START = 'jumpStart',
     JUMP_UP= 'jump-up',
     JUMP_FORWARD =  'jumpForwards',
     JUMP_BACKWARD =  'jumpBackwards',
+    JUMP_LAND = 'jumpLand',
     CROUCH = 'crouch',
     CROUCH_DOWN = 'crouchDown',
     CROUCH_UP = 'crouchUp'

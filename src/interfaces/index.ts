@@ -5,6 +5,6 @@ export type { default as FighterDirection } from './FighterDirection.ts';
 export type { default as Velocity } from './Velocity.ts';
 export type { default as InitialVelocity } from './InitialVelocity.ts';
 export type { default as Entity } from './Entities.ts';
-
+export type { default as FighterStateMetaData } from './FighterStateMetaData.ts';
 
 
