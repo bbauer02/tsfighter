@@ -15,5 +15,7 @@ export enum FighterState {
     JUMP_LAND = 'jumpLand',
     CROUCH = 'crouch',
     CROUCH_DOWN = 'crouchDown',
-    CROUCH_UP = 'crouchUp'
+    CROUCH_UP = 'crouchUp',
+    IDLE_TURN = 'idleTurn',
+    CROUCH_TURN = 'crouchTurn'
 }

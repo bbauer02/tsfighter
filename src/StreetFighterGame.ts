@@ -25,6 +25,11 @@ export class StreetFighterGame {
             new Ryu(104, STAGE_FLOOR, fighterDirection.RIGHT, 0),
             new Ken(280, STAGE_FLOOR, fighterDirection.LEFT, 1),
         ]
+
+        this.fighters[0].opponent = this.fighters[1];
+        this.fighters[1].opponent = this.fighters[0];
+
+
         this.entities = [
             new Stage(),
             ...this.fighters.map(fighter => new Shadow(fighter)),
@@ -36,6 +41,8 @@ export class StreetFighterGame {
             previous: 0,
             secondsPassed: 0,
         };
+
+
     }
 
     getContext() :CanvasRenderingContext2D {
