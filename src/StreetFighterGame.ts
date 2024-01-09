@@ -9,6 +9,7 @@ import {fighterDirection} from "./constants/fighter.ts";
 import Fighter from "./entities/fighters/Fighter.ts";
 import {pollGamepads, registerGamePadEvents, registerKeyboardEvents} from './InputHandle.ts';
 import {Shadow} from "./entities/fighters/shadow.ts";
+import { StatusBar } from './entities/overlays/StatusBar.ts';
 
 export class StreetFighterGame {
 
@@ -34,7 +35,8 @@ export class StreetFighterGame {
             new Stage(),
             ...this.fighters.map(fighter => new Shadow(fighter)),
             ...this.fighters,
-            new FpsCounter()
+            new FpsCounter(),
+            new StatusBar(this.fighters)
         ];
 
         this.frameTime = {
