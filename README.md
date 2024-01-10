@@ -1,4 +1,17 @@
-﻿# Partie 1 : Installation et Manipulation du canvas
+
+ # Version Actuelle sur la branche `main`.
+
+clonez le projet puis : 
+```
+npm install
+npm run dev
+```
+ 
+Compatible avec un PAD
+
+
+ # Les Etapes : 
+ # Partie 1 : Installation et Manipulation du canvas
 
 Pour accéder au code source de l'étape 1 : 
 
