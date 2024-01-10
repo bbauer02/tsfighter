@@ -1,12 +1,13 @@
 
 import { FrameTime } from "../interfaces";
+import {Camera} from "../camera.ts";
 export class FpsCounter {
     private fps : number;
     constructor() {
         this.fps = 0;
     }
 
-    update(time : FrameTime  ) : void     {
+    update(time : FrameTime , camera: Camera ) : void     {
         this.fps = Math.round(1 / time.secondsPassed);
     }
     draw(context : CanvasRenderingContext2D) {

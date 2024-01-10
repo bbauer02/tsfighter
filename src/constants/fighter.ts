@@ -1,4 +1,7 @@
 import { FighterDirection } from '../interfaces';
+
+
+
 export const fighterDirection : FighterDirection    = {
     LEFT: -1,
     RIGHT: 1
@@ -33,3 +36,4 @@ export const FrameDelay = {
 }
 
 export const PUSH_FRICTION = 66;
+export const FIGHTER_START_DISTANCE = 88;

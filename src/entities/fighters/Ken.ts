@@ -1,8 +1,8 @@
 import Fighter from "./Fighter.ts";
 import {FighterState, FrameDelay, PushBox} from "../../constants/fighter.ts";
 export class Ken extends Fighter {
-    constructor(x : number, y :number, direction :number, playerId: number) {
-        super('Ken', x, y, direction, playerId);
+    constructor(playerId: number) {
+        super('Ken', playerId);
         this.image = <HTMLImageElement>document.querySelector('img[alt="ken"]');
         this.frames = new Map([
             // IDLE
