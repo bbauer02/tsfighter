@@ -8,19 +8,25 @@ export const fighterDirection : FighterDirection    = {
 };
 
 export enum FighterState {
-    IDLE = 'idle',
-    WALK_FORWARD= 'walkForwards',
-    WALK_BACKWARD= 'walkBackwards',
-    JUMP_START = 'jumpStart',
-    JUMP_UP= 'jump-up',
-    JUMP_FORWARD =  'jumpForwards',
-    JUMP_BACKWARD =  'jumpBackwards',
-    JUMP_LAND = 'jumpLand',
-    CROUCH = 'crouch',
-    CROUCH_DOWN = 'crouchDown',
-    CROUCH_UP = 'crouchUp',
-    IDLE_TURN = 'idleTurn',
-    CROUCH_TURN = 'crouchTurn'
+    IDLE            = 'idle',
+    WALK_FORWARD    = 'walkForwards',
+    WALK_BACKWARD   = 'walkBackwards',
+    JUMP_START      = 'jumpStart',
+    JUMP_UP         = 'jump-up',
+    JUMP_FORWARD    =  'jumpForwards',
+    JUMP_BACKWARD   =  'jumpBackwards',
+    JUMP_LAND       = 'jumpLand',
+    CROUCH          = 'crouch',
+    CROUCH_DOWN     = 'crouchDown',
+    CROUCH_UP       = 'crouchUp',
+    IDLE_TURN       = 'idleTurn',
+    CROUCH_TURN     = 'crouchTurn',
+    LIGHT_PUNCH     = "lightPunch",
+    MEDIUM_PUNCH    = "mediumPunch",
+    HEAVY_PUNCH     = "heavyPunch",
+    LIGHT_KICK      = "lightKick",
+    MEDIUM_KICK     = "mediumKick",
+    HEAVY_KICK      = "heavyKick",
 }
 
 export const PushBox   = {

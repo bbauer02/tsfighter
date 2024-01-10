@@ -68,6 +68,36 @@ export class Ryu extends Fighter {
             ['crouch-turn-3', [[878, 46, 53, 61], [29, 58], PushBox.CROUCH]],
 
 
+            // Light Punch
+            ['light-punch-1', [[9, 365, 64, 91],[32, 88], PushBox.CROUCH]],
+            ['light-punch-2', [[98, 365, 92, 91],[32, 88], PushBox.CROUCH]],
+
+            // Med Punch
+            ['med-punch-1', [  [6, 466, 60, 94],  [29, 92], PushBox.IDLE]],
+            ['med-punch-2', [[86, 465, 74, 95],  [29, 92], PushBox.IDLE]],
+            ['med-punch-3', [ [175, 465, 108, 94],  [28, 92], PushBox.IDLE]],
+
+
+            // Heavy Punch
+            ['heavy-punch-1', [[175, 465, 108, 94],  [24, 92], PushBox.IDLE]],
+
+            // Light/MEDIUM KICK
+            // Light KICK
+            ['light-kick-1', [ [87, 923, 66, 92],[46, 93], PushBox.IDLE]],
+            ['light-kick-2', [[162, 922, 114, 94], [68, 95], PushBox.IDLE]],
+
+            // Med KICK
+            ['med-kick-1', [  [162, 922, 114, 94],  [68, 95], PushBox.IDLE]],
+
+            // Heavy KICK
+            ['heavy-kick-1', [[5, 1196, 61, 90],  [37, 87], PushBox.IDLE]],
+            ['heavy-kick-2', [[72, 1192, 94, 94],  [44, 91], PushBox.IDLE]],
+            ['heavy-kick-3', [[176, 1191, 120, 94],   [42, 91], PushBox.IDLE]],
+            ['heavy-kick-4', [[306, 1208, 101, 77],  [39, 74], PushBox.IDLE]],
+            ['heavy-kick-5', [[418, 1204, 64, 81],  [38, 78], PushBox.IDLE]],
+
+
+
         ]);
 
         this.animations = {
@@ -122,6 +152,51 @@ export class Ryu extends Fighter {
                 ["crouch-turn-2", 33],
                 ["crouch-turn-1", 33],
                 ["crouch-turn-1", FrameDelay.TRANSITION],
+            ],
+            [FighterState.LIGHT_PUNCH]: [
+                ["light-punch-1", 33],
+                ["light-punch-2", 66],
+                ["light-punch-1", 66],
+                ["light-punch-1", FrameDelay.TRANSITION],
+            ],
+            [FighterState.MEDIUM_PUNCH]: [
+                ["med-punch-1", 16],
+                ["med-punch-2", 33],
+                ["med-punch-3", 66],
+                ["med-punch-2", 50],
+                ["med-punch-1", 50],
+                ["med-punch-1", FrameDelay.TRANSITION],
+            ],
+            [FighterState.HEAVY_PUNCH]: [
+                ["med-punch-1", 50],
+                ["med-punch-2", 33],
+                ["med-punch-3", 100],
+                ["med-punch-2", 166],
+                ["med-punch-1", 199],
+                ["med-punch-1", FrameDelay.TRANSITION],
+            ],
+            [FighterState.LIGHT_KICK]: [
+                ["med-punch-1", 50],
+                ["light-kick-1", 50],
+                ["light-kick-2", 133],
+                ["light-kick-1", 66],
+                ["med-punch-1", 16],
+                ["med-punch-1", FrameDelay.TRANSITION],
+            ],
+            [FighterState.MEDIUM_KICK]: [
+                ["med-punch-1", 83],
+                ["light-kick-1", 100],
+                ["med-kick-1", 199],
+                ["light-kick-1", 116],
+                ["light-kick-1", FrameDelay.TRANSITION],
+            ],
+            [FighterState.HEAVY_KICK]: [
+                ["heavy-kick-1", 33],
+                ["heavy-kick-2", 66],
+                ["heavy-kick-3", 133],
+                ["heavy-kick-4", 166],
+                ["heavy-kick-5", 116],
+                ["heavy-kick-5", FrameDelay.TRANSITION],
             ],
         };
 
