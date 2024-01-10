@@ -1,7 +1,15 @@
 import { FrameTime } from "../../interfaces";
 import Fighter from "../fighters/Fighter";
-import { TIME_DELAY, TIME_FRAME_KEYS, TIME_FLASH_DELAY } from '../../constants/battle.ts';
+import {
+    TIME_DELAY,
+    TIME_FRAME_KEYS,
+    TIME_FLASH_DELAY,
+    HEALTH_MAX_HIT_POINTS,
+    HEALTH_DAMAGE_COLOR
+} from '../../constants/battle.ts';
 import {drawFrame} from "../../utils/context.ts";
+import {gameState} from "../../state/gameState.ts";
+import {FPS} from "../../constants/game.ts";
 export class StatusBar {
 
     private image: HTMLImageElement;
@@ -11,6 +19,18 @@ export class StatusBar {
     private fighters : Fighter[];
     private timeFlashTimer : number = 0;
     private useFlashFrames : boolean = false;
+
+    private healthBars = [
+        {
+        timer:0,
+        hitPoints: HEALTH_MAX_HIT_POINTS,
+        },
+        {
+            timer:0,
+            hitPoints: HEALTH_MAX_HIT_POINTS,
+        }
+    ];
+
     private names : string[]
     constructor(fighters : Fighter[]) {
         this.image = <HTMLImageElement>document.querySelector('img[alt="misc"');
@@ -74,14 +94,34 @@ export class StatusBar {
         }
     }
 
+    updateHealthBars(time : FrameTime) {
+        for(const index in this.healthBars) {
+            if(this.healthBars[index].hitPoints <= gameState.fighters[index].hitPoints) continue;
+            this.healthBars[index].hitPoints = Math.max(0, this.healthBars[index].hitPoints - (time.secondsPassed * FPS));
+        }
+    }
     update(time : FrameTime) {
         this.updateTime(time);
+        this.updateHealthBars(time);
     }
 
     drawHealthBars(context : CanvasRenderingContext2D) {
         this.drawFrame(context, 'health-bar', 31, 20 );
         this.drawFrame(context, 'ko-white', 176, 18 );
         this.drawFrame(context, 'health-bar', 353, 20,-1 );
+
+        context.fillStyle = HEALTH_DAMAGE_COLOR;
+
+        context.beginPath();
+        context.fillRect(
+            32,21,
+            HEALTH_MAX_HIT_POINTS - Math.floor(this.healthBars[0].hitPoints),9
+        );
+
+        context.fillRect(
+            208 + Math.floor(this.healthBars[1].hitPoints),21,
+            HEALTH_MAX_HIT_POINTS - Math.floor(this.healthBars[1].hitPoints),9
+        );
     }
 
     drawTime(context : CanvasRenderingContext2D) {
